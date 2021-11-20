@@ -51,11 +51,18 @@ namespace temporaryfile
 
 	TEST_CLASS(TestTemporaryDirectory)
 	{
-
 		TEST_METHOD(CreateTempDirPath)
 		{
 			const auto temp_dir = TemporaryDirectory("foo");
 			Assert::AreEqual(std::string("foo"), temp_dir.path().filename().string());
+		}
+
+		TEST_METHOD(CreateTempDir)
+		{
+			const auto temp_dir = TemporaryDirectory("foo").create();
+			Assert::IsTrue(std::filesystem::exists(temp_dir.path()));
+			Assert::IsTrue(std::filesystem::is_directory(temp_dir.path()));
+			Assert::IsFalse(std::filesystem::is_regular_file(temp_dir.path()));
 		}
 	};
 }
