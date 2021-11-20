@@ -16,8 +16,8 @@ template<path_type PATH_TYPE>
 class TemporaryPath
 {
 public:
-	explicit TemporaryPath(const std::string& path_str) {
-		m_path = std::shared_ptr<std::filesystem::path>(new std::filesystem::path{ std::filesystem::temp_directory_path() / path_str },
+	explicit TemporaryPath(const std::filesystem::path& rel_path) {
+		m_path = std::shared_ptr<std::filesystem::path>(new std::filesystem::path{ std::filesystem::temp_directory_path() / rel_path },
 			[](auto* p) {
 				std::error_code _;
 				std::filesystem::remove_all(*p, _);
@@ -37,6 +37,10 @@ public:
 		assert(m_path);
 
 		if constexpr (PATH_TYPE == path_type::file) {
+			if (!std::filesystem::exists(m_path->parent_path())) {
+				std::filesystem::create_directories(m_path->parent_path());
+			}
+
 			std::ofstream _(m_path->string());
 		}
 		else if constexpr (PATH_TYPE == path_type::directory) {
@@ -50,6 +54,7 @@ public:
 	}
 
 private:
+
 	std::shared_ptr<std::filesystem::path> m_path;
 };
 

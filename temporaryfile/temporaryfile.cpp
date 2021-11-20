@@ -27,6 +27,12 @@ namespace temporaryfile
 			Assert::IsTrue(fs::exists(temp_file.path()));
 		}
 
+		TEST_METHOD(CreateTempFileInSubdirectory)
+		{
+			const auto temp_file = TemporaryFile(fs::path("foo") / "bar" / "baz.txt").create();
+			Assert::IsTrue(fs::exists(temp_file.path()));
+		}
+
 		TEST_METHOD(TempFileIsDeletedWhenScopeEnds)
 		{
 			auto path = fs::path{};
