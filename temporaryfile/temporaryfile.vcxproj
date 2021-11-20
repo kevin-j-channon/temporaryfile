@@ -162,6 +162,9 @@
   <ItemGroup>
     <ClCompile Include="temporaryfile.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="temporary_file.hpp" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
