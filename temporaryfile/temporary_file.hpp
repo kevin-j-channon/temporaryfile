@@ -6,10 +6,10 @@
 #include <memory>
 #include <cassert>
 
-class TemporaryFile
+class TemporaryPath
 {
 public:
-	explicit TemporaryFile(const std::string& filename) {
+	explicit TemporaryPath(const std::string& filename) {
 		m_path = std::shared_ptr<std::filesystem::path>(new std::filesystem::path{ std::filesystem::temp_directory_path() / filename },
 			[](auto* p) {
 				std::error_code _;
@@ -26,7 +26,7 @@ public:
 		return *m_path;
 	}
 
-	TemporaryFile& create() {
+	TemporaryPath& create() {
 		assert(m_path);
 		std::ofstream _(m_path->string());
 		return *this;
@@ -35,3 +35,5 @@ public:
 private:
 	std::shared_ptr<std::filesystem::path> m_path;
 };
+
+using TemporaryFile = TemporaryPath;

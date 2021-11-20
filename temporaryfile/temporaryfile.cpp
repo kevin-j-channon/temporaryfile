@@ -11,7 +11,7 @@ namespace temporaryfile
 	TEST_CLASS(TestTemporaryFile)
 	{
 	public:
-		
+
 		TEST_METHOD(CreateTempFilePath)
 		{
 			const auto temp_file = TemporaryFile("foo.txt");
