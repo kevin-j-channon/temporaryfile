@@ -48,4 +48,14 @@ namespace temporaryfile
 			Assert::IsTrue(std::filesystem::exists(temp_1.path()));
 		}
 	};
+
+	TEST_CLASS(TestTemporaryDirectory)
+	{
+
+		TEST_METHOD(CreateTempDirPath)
+		{
+			const auto temp_dir = TemporaryDirectory("foo");
+			Assert::AreEqual(std::string("foo"), temp_dir.path().filename().string());
+		}
+	};
 }
