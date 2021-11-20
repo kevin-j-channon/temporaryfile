@@ -24,5 +24,17 @@ namespace temporaryfile
 			const auto temp_file = TemporaryFile("foo.txt").create();
 			Assert::IsTrue(std::filesystem::exists(temp_file.path()));
 		}
+
+		TEST_METHOD(TempFileIsDeletedWhenScopeEnds)
+		{
+			auto path = std::filesystem::path{};
+
+			{
+				const auto temp_file = TemporaryFile("foo.txt").create();
+				path = temp_file.path();
+			}
+
+			Assert::IsFalse(std::filesystem::exists(path));
+		}
 	};
 }
