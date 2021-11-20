@@ -2,6 +2,7 @@
 
 #include <filesystem>
 #include <string>
+#include <fstream>
 
 class TemporaryFile
 {
@@ -12,6 +13,13 @@ public:
 	}
 
 	const auto& path() const { return m_path; }
+
+	TemporaryFile& create()
+	{
+		std::ofstream _(m_path.string());
+
+		return *this;
+	}
 
 private:
 	std::filesystem::path m_path;

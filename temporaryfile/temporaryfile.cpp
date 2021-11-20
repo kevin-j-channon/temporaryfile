@@ -18,5 +18,11 @@ namespace temporaryfile
 
 			Assert::AreEqual(std::string("foo.txt"), temp_file.path().filename().string());
 		}
+
+		TEST_METHOD(CreateTempFile)
+		{
+			const auto temp_file = TemporaryFile("foo.txt").create();
+			Assert::IsTrue(std::filesystem::exists(temp_file.path()));
+		}
 	};
 }
