@@ -11,19 +11,13 @@ namespace fs = std::filesystem;
 
 namespace temporaryfile
 {
-	TEST_CLASS(FreeFunctions)
+	TEST_CLASS(TempPathRemoverTests)
 	{
 	public:
 
-		TEST_METHOD(CreateTempFilePath)
-		{
-			const auto path = create_tmp_path("foo.txt");
-			Assert::IsTrue(path.string().ends_with("foo.txt"));
-		}
-
 		TEST_METHOD(ScopedFileDeleterDeletesOnScopeExit)
 		{
-			const auto path = create_tmp_path("foo.txt");
+			const auto path = fs::temp_directory_path() / "foo.txt";
 			{
 				auto _ = ScopedFileDeleter(path);
 
@@ -35,7 +29,7 @@ namespace temporaryfile
 
 		TEST_METHOD(ScopedDirDeleterDeletesOnScopeExit)
 		{
-			const auto path = create_tmp_path("foo");
+			const auto path = fs::temp_directory_path() / "foo";
 			{
 				auto _ = ScopedDirectoryDeleter(path);
 
@@ -46,6 +40,24 @@ namespace temporaryfile
 			}
 
 			Assert::IsFalse(fs::exists(path));
+		}
+
+		TEST_METHOD(NestedDirectoriesAreRemovedOnScopeExit)
+		{
+			const auto path = fs::temp_directory_path() / "foo" / "bar" / "baz1.txt";
+			{
+				auto _ = ScopedFileDeleter{ fs::temp_directory_path() / "foo" };
+
+				fs::create_directories(path.parent_path());
+				std::ofstream f(path.string().c_str());
+
+				Assert::IsTrue(fs::exists(path));
+			}
+
+			Assert::IsFalse(fs::exists(path));
+			Assert::IsFalse(fs::exists(path.parent_path()));
+			Assert::IsFalse(fs::exists(path.parent_path().parent_path()));
+			Assert::IsTrue(fs::exists(path.parent_path().parent_path().parent_path()));
 		}
 	};
 }

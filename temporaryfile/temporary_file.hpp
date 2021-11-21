@@ -2,12 +2,6 @@
 
 #include <filesystem>
 
-
-std::filesystem::path create_tmp_path(const std::filesystem::path& rel_path)
-{
-	return std::filesystem::temp_directory_path() / rel_path;
-}
-
 class ScopedFileDeleter
 {
 public :
