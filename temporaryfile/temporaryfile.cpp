@@ -21,6 +21,18 @@ namespace temporaryfile
 			Assert::IsTrue(path.string().ends_with("foo.txt"));
 		}
 
+		TEST_METHOD(CreateScopedFileDeleter)
+		{
+			const auto path = create_tmp_path("foo.txt");
+			{
+				auto _ = ScopedFileDeleter(path);
+
+				{ std::ifstream(path.string().c_str()); }
+			}
+
+			Assert::IsFalse(fs::exists(path));
+		}
+
 		TEST_METHOD(CreateTempFilePath)
 		{
 			const auto temp_file = TemporaryFile("foo.txt");
