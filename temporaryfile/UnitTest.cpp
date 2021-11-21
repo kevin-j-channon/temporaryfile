@@ -1,4 +1,4 @@
-#include "temporary_file.hpp"
+#include "ScopedPathDeleter.hpp"
 
 #include "CppUnitTest.h"
 
@@ -9,17 +9,16 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace fs = std::filesystem;
 
-namespace temporaryfile
+namespace test_path_deleter
 {
-	TEST_CLASS(TempPathRemoverTests)
+	TEST_CLASS(GeneralTests)
 	{
 	public:
-
 		TEST_METHOD(ScopedFileDeleterDeletesOnScopeExit)
 		{
 			const auto path = fs::temp_directory_path() / "foo.txt";
 			{
-				auto _ = ScopedFileDeleter(path);
+				auto _ = ScopedPathDeleter(path);
 
 				{ std::ifstream(path.string().c_str()); }
 			}
@@ -31,7 +30,7 @@ namespace temporaryfile
 		{
 			const auto path = fs::temp_directory_path() / "foo";
 			{
-				auto _ = ScopedDirectoryDeleter(path);
+				auto _ = ScopedPathDeleter(path);
 
 				fs::create_directories(path);
 
@@ -46,7 +45,7 @@ namespace temporaryfile
 		{
 			const auto path = fs::temp_directory_path() / "foo" / "bar" / "baz1.txt";
 			{
-				auto _ = ScopedFileDeleter{ fs::temp_directory_path() / "foo" };
+				auto _ = ScopedPathDeleter{ fs::temp_directory_path() / "foo" };
 
 				fs::create_directories(path.parent_path());
 				std::ofstream f(path.string().c_str());

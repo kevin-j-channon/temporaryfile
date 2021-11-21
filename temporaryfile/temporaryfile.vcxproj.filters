@@ -15,12 +15,12 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="temporaryfile.cpp">
+    <ClCompile Include="UnitTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="temporary_file.hpp">
+    <ClInclude Include="ScopedPathDeleter.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
