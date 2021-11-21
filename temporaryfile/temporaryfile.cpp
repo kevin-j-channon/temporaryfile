@@ -3,6 +3,7 @@
 #include "CppUnitTest.h"
 
 #include <filesystem>
+#include <format>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -13,6 +14,12 @@ namespace temporaryfile
 	TEST_CLASS(TestTemporaryFile)
 	{
 	public:
+
+		TEST_METHOD(CreateTempFilePath1)
+		{
+			const auto path = create_tmp_path("foo.txt");
+			Assert::IsTrue(path.string().ends_with("foo.txt"));
+		}
 
 		TEST_METHOD(CreateTempFilePath)
 		{
@@ -29,10 +36,13 @@ namespace temporaryfile
 
 		TEST_METHOD(CreateTempFileInSubdirectory)
 		{
-			const auto temp_file = TemporaryFile(fs::path("foo") / "bar" / "baz.txt").create();
+			const auto temp_file = TemporaryFile(fs::path{ "foo" } / "bar" / "baz.txt").create();
 			Assert::IsTrue(fs::exists(temp_file.path()));
 		}
 
+		BEGIN_TEST_METHOD_ATTRIBUTE(TempFileIsDeletedWhenScopeEnds)
+			TEST_IGNORE()
+			END_TEST_METHOD_ATTRIBUTE()
 		TEST_METHOD(TempFileIsDeletedWhenScopeEnds)
 		{
 			auto path = fs::path{};
@@ -43,6 +53,23 @@ namespace temporaryfile
 			}
 
 			Assert::IsFalse(fs::exists(path));
+		}
+
+		BEGIN_TEST_METHOD_ATTRIBUTE(AllCreatedSubdirectoriesAreDeleteWhenScopeEnds)
+			TEST_IGNORE()
+		END_TEST_METHOD_ATTRIBUTE()
+		TEST_METHOD(AllCreatedSubdirectoriesAreDeleteWhenScopeEnds)
+		{
+			auto path = fs::path{};
+			{
+				const auto temp_file = TemporaryFile(fs::path{ "foo" } / "bar" / "baz.txt").create();
+				path = temp_file.path();
+			}
+
+			Assert::IsFalse(fs::exists(path));
+			Assert::IsFalse(fs::exists(path.parent_path()));
+			Assert::IsFalse(fs::exists(path.parent_path().parent_path()));
+			Assert::IsTrue(fs::exists(path.parent_path().parent_path().parent_path()));
 		}
 
 		TEST_METHOD(CopyingTempFilesDoesntDeleteTheFilePrematurely)

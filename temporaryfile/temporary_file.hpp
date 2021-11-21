@@ -12,18 +12,25 @@ enum class path_type
 	directory
 };
 
+std::filesystem::path create_tmp_path(const std::filesystem::path& rel_path)
+{
+	return std::filesystem::temp_directory_path() / rel_path;
+}
+
 template<path_type PATH_TYPE>
 class TemporaryPath
 {
 public:
 	explicit TemporaryPath(const std::filesystem::path& rel_path) {
 		m_path = std::shared_ptr<std::filesystem::path>(new std::filesystem::path{ std::filesystem::temp_directory_path() / rel_path },
-			[](auto* p) {
+			[this](auto* p) {
 				std::error_code _;
-				std::filesystem::remove_all(*p, _);
+				std::filesystem::remove_all(this->m_root_dir, _);
 
 				delete p;
 			});
+
+		m_root_dir = _calculate_first_parent_directory(rel_path);
 
 		assert(m_path);
 	}
@@ -55,6 +62,22 @@ public:
 
 private:
 
+	static std::filesystem::path _calculate_first_parent_directory(std::filesystem::path p) {
+		auto first_parent = std::filesystem::path{};
+		while (true) {
+			p = p.parent_path();
+			if (!p.string().empty()) {
+				first_parent = p;
+			}
+			else {
+				break;
+			}
+		}
+
+		return first_parent;
+	}
+
+	std::filesystem::path m_root_dir;
 	std::shared_ptr<std::filesystem::path> m_path;
 };
 
