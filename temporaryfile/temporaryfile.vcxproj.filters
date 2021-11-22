@@ -20,7 +20,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ScopedPathDeleter.hpp">
+    <ClInclude Include="scoped_file_remover.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scope_exit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
