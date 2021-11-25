@@ -115,12 +115,6 @@ namespace test_scope_exit
 				const ScopeExitAction<void(*)(void)> exit([]() {Logger::WriteMessage("Stateless?"); });
 				Assert::IsTrue(std::is_convertible_v<void(*)(void), decltype(exit)::Fn_t>);
 			}
-
-			// This fails...
-			//{
-			//	const auto exit = make_scope_exit_action([]() {Logger::WriteMessage("Stateless?"); });
-			//	Assert::IsTrue(std::is_convertible_v<void(*)(void), decltype(exit)::Fn_t>);
-			//}
 		}
 	};
 }
